@@ -2,67 +2,43 @@ using UnityEngine;
 
 namespace Game.Movement
 {
+    /// <summary>
+    /// Minimal base for movers. Owns the Rigidbody setup (the part that was painful to debug)
+    /// and exposes the public API other systems depend on: IsGrounded, Rigidbody, MoveInputWorld.
+    /// No gameplay logic lives here.
+    /// </summary>
     [RequireComponent(typeof(Rigidbody))]
     public abstract class AbstractUnitMover : MonoBehaviour
     {
         [Header("Refs")]
+        [Tooltip("Rigidbody da controllare. Se vuoto viene preso con GetComponent.")]
         [SerializeField] protected Rigidbody rb;
 
-        [Header("Locomotion")]
-        [SerializeField] protected float walkSpeed = 3f;
-        [SerializeField] protected float runSpeed = 6f;
-        [SerializeField] protected float rotationSpeed = 720f;
-        [SerializeField] protected float acceleration = 40f;
+        [Header("Rigidbody setup")]
+        [Tooltip("Blocca la rotazione Y del Rigidbody. Metti false quando arriva la classe di rotazione, se ruota via Rigidbody.")]
+        [SerializeField] private bool freezeYaw = true;
 
-        [Header("Jump / Gravity")]
-        [SerializeField] protected float jumpForce = 8f;
-        [SerializeField] protected float gravityScale = 3f;
-        [SerializeField] protected float groundCheckDistance = 0.2f;
-        [SerializeField] protected LayerMask groundMask;
-
-        [Header("Debug")]
-        [SerializeField] protected bool drawGizmos = true;
-
-        protected Vector3 _moveInputWorld;
-        protected bool _isGrounded;
-        protected float _verticalVelocity;
-
-        public bool IsGrounded => _isGrounded;
         public Rigidbody Rigidbody => rb;
+
+        /// <summary>True when standing on valid ground.</summary>
+        public abstract bool IsGrounded { get; }
+
+        /// <summary>World-space move direction this tick (XZ). Zero when an exclusive module owns the movement.</summary>
+        public abstract Vector3 MoveInputWorld { get; }
 
         protected virtual void Awake()
         {
             if (rb == null) rb = GetComponent<Rigidbody>();
-            rb.freezeRotation = true;
-            rb.useGravity = false; // we apply custom gravity
-        }
 
-        protected virtual void FixedUpdate()
-        {
-            GroundCheck();
-            ApplyCustomGravity();
-            ApplyMovement(Time.fixedDeltaTime);
-        }
+            rb.useGravity = false;      // gravity is applied by our own code
+            rb.sleepThreshold = 0f;     // never sleep: velocity writes on a sleeping body are ignored
+            rb.linearDamping = 0f;      // damping would silently fight our velocity writes
 
-        protected virtual void GroundCheck()
-        {
-            Vector3 origin = transform.position + Vector3.up * 0.1f;
-            _isGrounded = Physics.Raycast(origin, Vector3.down, groundCheckDistance + 0.1f, groundMask, QueryTriggerInteraction.Ignore);
-        }
+            RigidbodyConstraints c = rb.constraints | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            c = freezeYaw ? (c | RigidbodyConstraints.FreezeRotationY) : (c & ~RigidbodyConstraints.FreezeRotationY);
+            rb.constraints = c;
 
-        protected virtual void ApplyCustomGravity()
-        {
-            _verticalVelocity += Physics.gravity.y * gravityScale * Time.fixedDeltaTime;
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, _verticalVelocity, rb.linearVelocity.z);
-        }
-
-        protected abstract void ApplyMovement(float dt);
-
-        protected virtual void OnDrawGizmosSelected()
-        {
-            if (!drawGizmos) return;
-            Gizmos.color = _isGrounded ? Color.green : Color.red;
-            Gizmos.DrawLine(transform.position + Vector3.up * 0.1f, transform.position + Vector3.up * 0.1f + Vector3.down * (groundCheckDistance + 0.1f));
+            rb.WakeUp();
         }
     }
 }

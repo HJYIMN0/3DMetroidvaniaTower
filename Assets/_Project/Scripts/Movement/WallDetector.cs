@@ -2,15 +2,36 @@
 
 namespace Game.Movement
 {
+    /// <summary>
+    /// Pure raycast wall detector. Casts horizontal rays in world-aligned directions (independent from the
+    /// player's facing) at several heights and keeps the nearest near-vertical hit.
+    /// The coordinator calls Refresh() once per physics tick.
+    /// </summary>
     public class WallDetector : MonoBehaviour
     {
+        [Header("Masks")]
+        [Tooltip("Layer considerati parete (es. Wall).")]
         [SerializeField] private LayerMask wallMask;
-        [SerializeField] private float checkDistance = 0.6f;
-        [SerializeField] private float rayHeightOffset = 1.0f;
-        [SerializeField] private int rayCount = 3;
+
+        [Header("Rays")]
+        [Tooltip("Lunghezza dei raggi (m) dal centro del player. Deve superare il raggio della capsule.")]
+        [SerializeField, Min(0.05f)] private float checkDistance = 0.6f;
+        [Tooltip("Altezza del raggio più basso, dal pivot (m).")]
+        [SerializeField] private float rayHeightMin = 0.4f;
+        [Tooltip("Altezza del raggio più alto, dal pivot (m).")]
+        [SerializeField] private float rayHeightMax = 1.4f;
+        [Tooltip("Quanti livelli di altezza controllare.")]
+        [SerializeField, Range(1, 5)] private int heightRayCount = 3;
+        [Tooltip("Quante direzioni orizzontali controllare (8 = ogni 45°).")]
+        [SerializeField, Range(4, 16)] private int directionCount = 8;
+        [Tooltip("Scarta superfici con |normal.y| sopra questo valore (pavimenti, rampe).")]
+        [SerializeField, Range(0f, 1f)] private float maxWallNormalY = 0.2f;
 
         public bool HasWall { get; private set; }
-        public Vector3 WallNormal { get; private set; }
+        /// <summary>Normal of the nearest wall (points away from the wall).</summary>
+        public Vector3 WallNormal { get; private set; } = Vector3.forward;
+        public Vector3 WallPoint { get; private set; }
+        public float WallDistance { get; private set; }
         public RaycastHit WallHit { get; private set; }
 
         public System.Action<RaycastHit> OnWallEnter;
@@ -18,29 +39,42 @@ namespace Game.Movement
 
         private bool _prevHasWall;
 
-        private void Update()
+        /// <summary>Samples walls around the player. Call once per FixedUpdate.</summary>
+        public void Refresh()
         {
-            HasWall = false;
-            Vector3 origin = transform.position + Vector3.up * rayHeightOffset;
+            bool found = false;
+            float best = float.MaxValue;
+            RaycastHit bestHit = default;
 
-            for (int i = 0; i < rayCount; i++)
+            Vector3 pos = transform.position;
+            float step = 360f / directionCount;
+
+            for (int h = 0; h < heightRayCount; h++)
             {
-                float t = rayCount == 1 ? 0.5f : i / (float)(rayCount - 1);
-                Vector3 o = origin + Vector3.up * (t - 0.5f) * 1.5f;
+                float t = heightRayCount == 1 ? 0.5f : h / (float)(heightRayCount - 1);
+                Vector3 origin = pos + Vector3.up * Mathf.Lerp(rayHeightMin, rayHeightMax, t);
 
-                // Check all four horizontal directions
-                for (int d = 0; d < 4; d++)
+                for (int d = 0; d < directionCount; d++)
                 {
-                    Vector3 dir = Quaternion.Euler(0, d * 90f, 0) * transform.forward;
-                    if (Physics.Raycast(o, dir, out var hit, checkDistance, wallMask, QueryTriggerInteraction.Ignore))
+                    Vector3 dir = Quaternion.Euler(0f, d * step, 0f) * Vector3.forward;
+                    if (!Physics.Raycast(origin, dir, out RaycastHit hit, checkDistance, wallMask, QueryTriggerInteraction.Ignore)) continue;
+                    if (Mathf.Abs(hit.normal.y) > maxWallNormalY) continue;
+                    if (hit.distance < best)
                     {
-                        HasWall = true;
-                        WallNormal = hit.normal;
-                        WallHit = hit;
-                        break;
+                        best = hit.distance;
+                        bestHit = hit;
+                        found = true;
                     }
                 }
-                if (HasWall) break;
+            }
+
+            HasWall = found;
+            if (found)
+            {
+                WallHit = bestHit;
+                WallNormal = bestHit.normal;
+                WallPoint = bestHit.point;
+                WallDistance = best;
             }
 
             if (HasWall && !_prevHasWall) OnWallEnter?.Invoke(WallHit);
@@ -48,14 +82,31 @@ namespace Game.Movement
             _prevHasWall = HasWall;
         }
 
+        [ContextMenu("Debug/Print State")]
+        private void PrintState()
+        {
+            Debug.Log($"[WallDetector] hasWall={HasWall} normal={WallNormal} distance={WallDistance:F2}");
+        }
+
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = HasWall ? Color.cyan : Color.gray;
-            Vector3 origin = transform.position + Vector3.up * rayHeightOffset;
-            for (int d = 0; d < 4; d++)
+            float step = 360f / Mathf.Max(1, directionCount);
+            for (int h = 0; h < heightRayCount; h++)
             {
-                Vector3 dir = Quaternion.Euler(0, d * 90f, 0) * transform.forward;
-                Gizmos.DrawLine(origin, origin + dir * checkDistance);
+                float t = heightRayCount == 1 ? 0.5f : h / (float)(heightRayCount - 1);
+                Vector3 origin = transform.position + Vector3.up * Mathf.Lerp(rayHeightMin, rayHeightMax, t);
+                Gizmos.color = HasWall ? Color.cyan : Color.gray;
+                for (int d = 0; d < directionCount; d++)
+                {
+                    Vector3 dir = Quaternion.Euler(0f, d * step, 0f) * Vector3.forward;
+                    Gizmos.DrawLine(origin, origin + dir * checkDistance);
+                }
+            }
+
+            if (HasWall)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawRay(WallPoint, WallNormal * 0.7f);
             }
         }
     }

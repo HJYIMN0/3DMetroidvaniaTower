@@ -21,12 +21,25 @@ namespace Game.Movement
         [Header("Runtime State (read-only)")]
         [SerializeField] private bool _canDoubleJump;
 
+        // NOTE: Rotation is handled by a separate component (to be added later).
+        // PlayerMover only applies translation. It exposes MoveInputWorld so the
+        // rotation system can consume the same direction vector.
+
         private float _lastGroundedTime = -999f;
         private float _lastJumpInputTime = -999f;
 
         private WallDetector _wall;
         private LedgeDetector _ledge;
         private WallSlideController _slide;
+
+        /// <summary>World-space move direction this frame (XZ, normalized, 0 if no input).</summary>
+        public Vector3 MoveInputWorld { get; private set; }
+
+        /// <summary>True if the player is currently dodging (used by rotation lockers).</summary>
+        public bool IsDodging => dodge != null && dodge.IsDodging;
+
+        /// <summary>True if the player is currently wall-sliding.</summary>
+        public bool IsWallSliding => _slide != null && _slide.IsSliding;
 
         protected override void Awake()
         {
@@ -69,47 +82,49 @@ namespace Game.Movement
 
         protected override void ApplyMovement(float dt)
         {
-            // Dodge has absolute priority over locomotion
+            // --- Priority 1: Dodge ---
             if (dodge != null && dodge.IsDodging)
             {
                 Vector3 v = dodge.GetCurrentVelocity();
                 float y = dodge.CancelVerticalVelocity ? 0f : rb.linearVelocity.y;
                 rb.linearVelocity = new Vector3(v.x, y, v.z);
+                MoveInputWorld = Vector3.zero;
                 return;
             }
 
-            // Wall slide overrides horizontal control while active
+            // --- Priority 2: Wall slide ---
             if (_slide.IsSliding)
             {
                 _slide.TickSlide(rb, dt);
+                MoveInputWorld = Vector3.zero;
                 return;
             }
 
+            // --- Camera-relative basis ---
             Vector2 raw = inputReader != null ? inputReader.MoveInput : Vector2.zero;
+
             Vector3 camF = cameraTransform != null ? cameraTransform.forward : Vector3.forward;
             Vector3 camR = cameraTransform != null ? cameraTransform.right : Vector3.right;
             camF.y = 0f; camR.y = 0f;
             camF.Normalize(); camR.Normalize();
 
-            _moveInputWorld = (camF * raw.y + camR * raw.x);
-            if (_moveInputWorld.sqrMagnitude > 1f) _moveInputWorld.Normalize();
+            MoveInputWorld = (camF * raw.y + camR * raw.x);
+            if (MoveInputWorld.sqrMagnitude > 1f) MoveInputWorld.Normalize();
 
+            // --- Horizontal velocity ---
             bool running = raw.magnitude > 0.75f;
             float targetSpeed = running ? runSpeed : walkSpeed;
 
-            Vector3 targetVel = _moveInputWorld * targetSpeed;
+            Vector3 targetVel = MoveInputWorld * targetSpeed;
             Vector3 currentHoriz = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             Vector3 newHoriz = Vector3.MoveTowards(currentHoriz, targetVel, acceleration * dt);
             rb.linearVelocity = new Vector3(newHoriz.x, rb.linearVelocity.y, newHoriz.z);
 
-            // Rotation
-            if (_moveInputWorld.sqrMagnitude > 0.001f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(_moveInputWorld);
-                rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, targetRot, rotationSpeed * dt));
-            }
+            // --- NO ROTATION HERE ---
+            // Rotation is delegated to a dedicated component (to be added later).
+            // It can read MoveInputWorld, IsDodging, IsWallSliding above.
 
-            // Jump handling (buffered + coyote)
+            // --- Jump (buffered + coyote) ---
             bool coyoteOk = Time.time - _lastGroundedTime <= coyoteTime;
             bool bufferOk = Time.time - _lastJumpInputTime <= jumpBufferTime;
 
@@ -131,7 +146,7 @@ namespace Game.Movement
         {
             if (_wall.HasWall)
             {
-                _canDoubleJump = true;   // wall grab enables double jump
+                _canDoubleJump = true;
                 _slide.BeginSlide();
             }
         }
@@ -140,7 +155,6 @@ namespace Game.Movement
         {
             if (_ledge.HasLedge)
             {
-                // TODO: snap to ledge, play hang animation, disable gravity
                 Debug.Log("[PlayerMover] Ledge grab detected.");
             }
         }
