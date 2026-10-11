@@ -596,13 +596,20 @@ GameObject:
   - component: {fileID: 1033811960}
   - component: {fileID: 1033811959}
   - component: {fileID: 1033811958}
+  - component: {fileID: 1033811953}
+  - component: {fileID: 1033811972}
   - component: {fileID: 1033811957}
   - component: {fileID: 1033811956}
-  - component: {fileID: 1033811955}
-  - component: {fileID: 1033811954}
-  - component: {fileID: 1033811953}
+  - component: {fileID: 1033811971}
+  - component: {fileID: 1033811970}
+  - component: {fileID: 1033811969}
+  - component: {fileID: 1033811968}
+  - component: {fileID: 1033811967}
+  - component: {fileID: 1033811966}
+  - component: {fileID: 1033811965}
+  - component: {fileID: 1033811964}
   - component: {fileID: 1033811963}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -625,60 +632,34 @@ MonoBehaviour:
   parryAction: {fileID: 7206486282653370948, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   dodgeAction: {fileID: -7687635863663810299, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   jumpAction: {fileID: 1531964163347329223, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
-  grabWallAction: {fileID: 0}
-  grabLedgeAction: {fileID: 0}
+  grabWallAction: {fileID: -6393868299011572517, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  grabLedgeAction: {fileID: 8165214789630322730, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   moveAction: {fileID: -8245732656636786836, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   lookAction: {fileID: 9218188208422169878, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
-  attackPriority: 30
-  dodgePriority: 50
-  dodgeOverridesAttack: 1
---- !u!114 &1033811954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1033811952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09b2b20f00289a341a4e91819ac0ba60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.PlayerMover
-  rb: {fileID: 1033811958}
-  walkSpeed: 3
-  runSpeed: 6
-  rotationSpeed: 720
-  acceleration: 40
-  jumpForce: 8
-  gravityScale: 3
-  groundCheckDistance: 0.2
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 256
-  drawGizmos: 1
-  inputReader: {fileID: 1033811953}
-  cameraTransform: {fileID: 2132178967}
-  dodge: {fileID: 0}
-  coyoteTime: 0.12
-  jumpBufferTime: 0.15
-  canDoubleJumpOnlyAfterWallGrab: 1
-  _canDoubleJump: 0
---- !u!114 &1033811955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1033811952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f21ea15413e28d94e8baac9cd72ba8ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.WallSlideController
-  minSlideSpeed: 1.5
-  maxSlideSpeed: 6
-  slideAcceleration: 4
-  slideDurationMax: 5
+  attackSettings:
+    priority: 30
+    overridesLower: 0
+    immuneToOverride: 0
+  parrySettings:
+    priority: 100
+    overridesLower: 0
+    immuneToOverride: 1
+  dodgeSettings:
+    priority: 50
+    overridesLower: 1
+    immuneToOverride: 0
+  jumpSettings:
+    priority: 90
+    overridesLower: 0
+    immuneToOverride: 1
+  grabWallSettings:
+    priority: 90
+    overridesLower: 0
+    immuneToOverride: 1
+  grabLedgeSettings:
+    priority: 90
+    overridesLower: 0
+    immuneToOverride: 1
 --- !u!114 &1033811956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -694,10 +675,20 @@ MonoBehaviour:
   ledgeMask:
     serializedVersion: 2
     m_Bits: 128
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
   headHeight: 1.7
   forwardCastDistance: 0.7
-  downwardCastDistance: 1.2
+  probeHeightAbove: 0.5
+  probeInset: 0.05
+  downCastDistance: 1.2
   minLedgeHeight: 0.3
+  maxWallNormalY: 0.2
+  minTopNormalY: 0.7
+  clearanceHeight: 1.8
+  clearanceRadius: 0.3
+  clearanceForwardOffset: 0.5
 --- !u!114 &1033811957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -714,8 +705,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   checkDistance: 0.6
-  rayHeightOffset: 1
-  rayCount: 3
+  rayHeightMin: 0.4
+  rayHeightMax: 1.4
+  heightRayCount: 3
+  directionCount: 8
+  maxWallNormalY: 0.2
 --- !u!54 &1033811958
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -750,7 +744,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1033811952}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ff7c9f0108aed4e468c161147bfc80ea, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -847,14 +841,317 @@ MonoBehaviour:
   m_GameObject: {fileID: 1033811952}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 766f3021bebe94946acbc470ca2daa9f, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b0d09f17b4f44c46a1e968ae7232789, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement._DebugMoveProbe
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.TestVisualFacing
+  body: {fileID: 1033811958}
+  visual: {fileID: 2132178967}
+  turnSpeed: 720
+  minSpeed: 0.5
+--- !u!114 &1033811964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40671c8d2896c3a45827681d0dac27a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.MovementDebugHUD
+  coordinator: {fileID: 1033811971}
+  show: 1
+  screenPosition: {x: 10, y: 10}
+  fontSize: 14
+  lockCursor: 1
+--- !u!114 &1033811965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47af5ee2237a77f469d1ade5cadae9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.DodgeModule
+  priority: 100
+  duration: 0.5
+  cooldown: 0.15
+  inputBufferTime: 0.15
+  iFrameStartDelay: 0.05
+  iFrameDuration: 0.3
+  distance: 4
+  positionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  backstepWhenNoInput: 1
+  cancelVerticalVelocity: 0
+  gravityWhileDodging: 25
+  canDodgeInAir: 1
+  maxAirDodges: 1
+--- !u!114 &1033811966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e84f404d36ca62489cc67b01626b683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.LedgeGrabModule
+  priority: 90
+  detector: {fileID: 1033811956}
+  autoGrabWhenFalling: 1
+  grabBufferTime: 0.25
+  maxUpwardSpeedToGrab: 2
+  regrabCooldown: 0.5
+  hangDistanceFromWall: 0.35
+  hangPivotBelowLedge: 1.7
+  snapDuration: 0.08
+  maxHangTime: 0
+  climbDuration: 0.6
+  climbCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  verticalPortion: 0.65
+  climbForwardDistance: 0.5
+  climbExtraHeight: 0.05
+  climbWithJump: 1
+  climbByPushingTowardWall: 1
+  dropByPushingAway: 1
+  pushThreshold: 0.6
+--- !u!114 &1033811967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb9ebc81a0603844b93557d5785ed2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.WallRunModule
+  priority: 80
+  wall: {fileID: 1033811957}
+  minAirTime: 0.05
+  minEntrySpeed: 4
+  maxEntryAngle: 60
+  wallRunSpeed: 8
+  wallRunAcceleration: 30
+  maxDuration: 1.5
+  entryUpBoost: 2.5
+  wallGravity: 8
+  maxFallSpeed: 6
+  stickSpeed: 1.5
+  requireInput: 1
+  wallLostGrace: 0.12
+  reattachCooldown: 0.4
+  grantsAirJump: 1
+  jumpBufferTime: 0.15
+  wallJump:
+    upSpeed: 8
+    awaySpeed: 5
+    alongSpeed: 3
+--- !u!114 &1033811968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 375847e6bc894f24f861dd4d57e508f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.WallSlideModule
+  priority: 70
+  wall: {fileID: 1033811957}
+  autoSlide: 0
+  grabBufferTime: 0.2
+  maxUpwardSpeedToStart: 2
+  minAirTime: 0.05
+  minSlideSpeed: 1.5
+  maxSlideSpeed: 6
+  slideAcceleration: 4
+  maxDuration: 5
+  stickSpeed: 1
+  horizontalDamping: 20
+  wallLostGrace: 0.1
+  dropByPushingAway: 1
+  reattachCooldown: 0.3
+  grantsAirJump: 1
+  jumpBufferTime: 0.15
+  wallJump:
+    upSpeed: 8
+    awaySpeed: 5
+    alongSpeed: 0
+--- !u!114 &1033811969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d609ef92886e81a4da401633d9e63db9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.JumpModule
+  priority: 60
+  jumpHeight: 2.2
+  timeToApex: 0.4
+  fallGravityMultiplier: 1.6
+  jumpCutGravityMultiplier: 3
+  apexThreshold: 1
+  apexGravityMultiplier: 0.6
+  maxFallSpeed: 25
+  coyoteTime: 0.12
+  jumpBufferTime: 0.15
+  ignoreGroundAfterJump: 0.1
+  startAirJumpsOnGround: 0
+  maxAirJumps: 1
+  airJumpHeight: 1.6
+  derivedGravity: 27.5
+  derivedJumpVelocity: 11
+  derivedAirTime: 0.71622777
+--- !u!114 &1033811970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52ac7abb72b56e3408b6cda574fb047c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.LocomotionModule
+  priority: 10
+  walkSpeed: 3
+  runSpeed: 6
+  runInputThreshold: 0.75
+  timeToMaxSpeed: 0.2
+  timeToStop: 0.1
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  timeToChangeDirection: 0.1
+  airControl: 0.8
+  currentSpeed: 0
+  ramp: 0
+  headingDegrees: 0
+--- !u!114 &1033811971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd58f1897a0e63846b0df06eefaeef86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.PlayerMovementCoordinator
+  rb: {fileID: 1033811958}
+  freezeYaw: 1
   inputReader: {fileID: 1033811953}
-  mover: {fileID: 0}
-  rb: {fileID: 0}
-  forceVelocity: 0
-  forcedVelocity: {x: 0, y: 0, z: 5}
+  cameraTransform: {fileID: 2132178967}
+  recordDodgeCommands: 1
+  ground: {fileID: 1033811972}
+  wall: {fileID: 1033811957}
+  ledge: {fileID: 1033811956}
+  fallbackGravity: 30
+  fallbackMaxFallSpeed: 25
+  logTransitions: 1
+--- !u!114 &1033811972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033811952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e467f21826d27f49bfaacad36b13187, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.GroundDetector
+  capsule: {fileID: 1033811959}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 256
+  checkDistance: 0.12
+  skin: 0.05
+  radiusShrink: 0.03
+  maxSlopeAngle: 55
 --- !u!1 &1130765306
 GameObject:
   m_ObjectHideFlags: 0
