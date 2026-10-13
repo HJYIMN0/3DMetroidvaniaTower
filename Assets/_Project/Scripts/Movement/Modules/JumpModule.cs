@@ -58,6 +58,7 @@ namespace Game.Movement
         private bool _coyoteArmed;                                // true after touching ground, false after a jump
         private float _lastCoyoteDelay = -1f;
         private float _lastJumpTime = -999f;
+        private bool _jumpRising;   // true after a jump made by THIS module, until vy <= 0 (jump-cut applies only then)
         private int _airJumpsLeft;
 
         public override bool Exclusive => false;
@@ -126,6 +127,7 @@ namespace Game.Movement
                 if (!float.IsInfinity(_airborneSince)) _lastCoyoteDelay = Mathf.Max(0f, ctx.Jump.time - _airborneSince);
                 vy = TakeoffVelocity(jumpHeight, g, dt);
                 _lastJumpTime = now;
+                _jumpRising = true;
                 _coyoteArmed = false;   // one ground jump per ground contact
                 ctx.Jump.Clear();
             }
@@ -133,9 +135,12 @@ namespace Game.Movement
             {
                 vy = TakeoffVelocity(airJumpHeight, g, dt);
                 _lastJumpTime = now;
+                _jumpRising = true;
                 _airJumpsLeft--;
                 ctx.Jump.Clear();
             }
+
+            if (vy <= 0f) _jumpRising = false;
 
             // ---- gravity ----
             if (grounded && vy <= 0f)
@@ -145,7 +150,7 @@ namespace Game.Movement
             else
             {
                 float mult = vy > 0f
-                    ? (ctx.JumpHeld ? 1f : jumpCutGravityMultiplier)
+                    ? ((ctx.JumpHeld || !_jumpRising) ? 1f : jumpCutGravityMultiplier)
                     : fallGravityMultiplier;
                 if (Mathf.Abs(vy) < apexThreshold) mult *= apexGravityMultiplier;
 

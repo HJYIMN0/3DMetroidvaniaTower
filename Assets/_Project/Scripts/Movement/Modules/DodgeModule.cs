@@ -28,8 +28,10 @@ namespace Game.Movement
         [Header("Motion")]
         [Tooltip("Distanza totale (m) percorsa. Resta esatta qualunque sia la curva.")]
         [SerializeField, Min(0f)] private float distance = 4f;
-        [Tooltip("Progresso di posizione nel tempo. X = tempo normalizzato, Y = distanza normalizzata (0→1). EaseInOut = parte e finisce piano.")]
-        [SerializeField] private AnimationCurve positionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [Tooltip("Progresso di posizione nel tempo. X = tempo normalizzato, Y = distanza normalizzata (0→1). " +
+                 "La PENDENZA all'inizio è la velocità di partenza: pendenza alta = la schivata parte subito. " +
+                 "Una curva EaseInOut parte da velocità 0 e dà la sensazione di ritardo. Menu ⋮ > 'Debug/Reset Curve To Fast Start' per il default.")]
+        [SerializeField] private AnimationCurve positionCurve = FastStartCurve();
         [Tooltip("Senza input di movimento: true = schivata all'indietro, false = in avanti (rispetto all'ultima direzione).")]
         [SerializeField] private bool backstepWhenNoInput = true;
 
@@ -54,6 +56,18 @@ namespace Game.Movement
         private Vector3 _pendingDir;
         private int _airDodgesUsed;
         private bool _groundedCache;   // last grounded state seen by CanExecute (used by CanStartNow)
+
+        // Starts at full speed (initial slope 2 = 2x the average speed) and decelerates to a stop: the dodge reacts instantly.
+        private static AnimationCurve FastStartCurve()
+        {
+            return new AnimationCurve(new Keyframe(0f, 0f, 0f, 2f), new Keyframe(1f, 1f, 0f, 0f));
+        }
+
+        [ContextMenu("Debug/Reset Curve To Fast Start")]
+        private void ResetCurveToFastStart()
+        {
+            positionCurve = FastStartCurve();
+        }
 
         public override bool Exclusive => true;
         protected override int DefaultPriority => 100;

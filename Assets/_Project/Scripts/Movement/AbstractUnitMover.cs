@@ -14,10 +14,6 @@ namespace Game.Movement
         [Tooltip("Rigidbody da controllare. Se vuoto viene preso con GetComponent.")]
         [SerializeField] protected Rigidbody rb;
 
-        [Header("Rigidbody setup")]
-        [Tooltip("Blocca la rotazione Y del Rigidbody. Metti false quando arriva la classe di rotazione, se ruota via Rigidbody.")]
-        [SerializeField] private bool freezeYaw = true;
-
         public Rigidbody Rigidbody => rb;
 
         /// <summary>True when standing on valid ground.</summary>
@@ -34,9 +30,7 @@ namespace Game.Movement
             rb.sleepThreshold = 0f;     // never sleep: velocity writes on a sleeping body are ignored
             rb.linearDamping = 0f;      // damping would silently fight our velocity writes
 
-            RigidbodyConstraints c = rb.constraints | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            c = freezeYaw ? (c | RigidbodyConstraints.FreezeRotationY) : (c & ~RigidbodyConstraints.FreezeRotationY);
-            rb.constraints = c;
+            // Rigidbody Constraints are NOT touched here: set them from the Inspector.
 
             rb.WakeUp();
         }

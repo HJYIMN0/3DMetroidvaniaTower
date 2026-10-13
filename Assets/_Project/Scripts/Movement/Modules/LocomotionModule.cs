@@ -56,6 +56,14 @@ namespace Game.Movement
             if (Time.fixedTime - _lastTickTime > dt * 1.5f) SyncFromRigidbody();
             _lastTickTime = Time.fixedTime;
 
+            // After a wall jump the heading must stay inside the control zone: speed is kept, only steering is allowed.
+            if (ctx.IsGrounded) ctx.ClearHeadingLock();
+            if (ctx.HeadingLocked)
+            {
+                TickLocked(ctx, dt);
+                return;
+            }
+
             float airMul = ctx.IsGrounded ? 1f : airControl;
             Vector3 input = ctx.MoveInputWorld;
             bool hasInput = input.sqrMagnitude > 0.0001f;
@@ -91,6 +99,45 @@ namespace Game.Movement
 
             Vector3 v = rb.linearVelocity;
             rb.linearVelocity = new Vector3(dir.x * currentSpeed, v.y, dir.z * currentSpeed);
+        }
+
+        // Heading-locked tick (after a wall jump): keeps the horizontal speed, lets the input steer the direction
+        // only inside the zone (center +/- left/right) set by the wall jump.
+        private void TickLocked(MovementContext ctx, float dt)
+        {
+            Vector3 v = rb.linearVelocity;
+            Vector3 h = Flat(v);
+            float speed = h.magnitude;
+
+            if (speed > 0.05f)
+            {
+                float heading = Mathf.Atan2(h.x, h.z) * Mathf.Rad2Deg;
+
+                Vector3 input = ctx.MoveInputWorld;
+                if (input.sqrMagnitude > 0.0001f)
+                {
+                    float desired = ClampToLock(ctx, Mathf.Atan2(input.x, input.z) * Mathf.Rad2Deg);
+                    float turnRate = timeToChangeDirection > 0.0001f ? 180f / timeToChangeDirection : 100000f;
+                    heading = Mathf.MoveTowardsAngle(heading, desired, turnRate * airControl * dt);
+                }
+
+                heading = ClampToLock(ctx, heading);
+                headingDegrees = heading;
+
+                float rad = heading * Mathf.Deg2Rad;
+                rb.linearVelocity = new Vector3(Mathf.Sin(rad) * speed, v.y, Mathf.Cos(rad) * speed);
+            }
+
+            // keep the internal state in sync so control resumes smoothly when the lock ends
+            ramp = RampForSpeed(Mathf.Min(speed, runSpeed));
+            currentSpeed = speed;
+        }
+
+        private static float ClampToLock(MovementContext ctx, float headingDeg)
+        {
+            float offset = Mathf.DeltaAngle(ctx.HeadingLockCenterDeg, headingDeg);
+            offset = Mathf.Clamp(offset, -ctx.HeadingLockLeftDeg, ctx.HeadingLockRightDeg);
+            return ctx.HeadingLockCenterDeg + offset;
         }
 
         private void SyncFromRigidbody()

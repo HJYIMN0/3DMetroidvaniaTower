@@ -53,6 +53,25 @@ namespace Game.Movement
         /// <summary>Set by a module that handled vertical velocity this tick. If false, the coordinator applies fallback gravity.</summary>
         public bool VerticalHandled;
 
+        // ---- Heading lock (set by wall jumps, read by LocomotionModule) ----
+        public float HeadingLockUntil = float.NegativeInfinity;
+        public float HeadingLockCenterDeg;
+        public float HeadingLockLeftDeg;
+        public float HeadingLockRightDeg;
+
+        /// <summary>True while the air heading must stay inside the lock zone (center +/- left/right degrees).</summary>
+        public bool HeadingLocked => Time.time < HeadingLockUntil;
+
+        public void LockHeading(float seconds, float centerDeg, float leftDeg, float rightDeg)
+        {
+            HeadingLockUntil = Time.time + seconds;
+            HeadingLockCenterDeg = centerDeg;
+            HeadingLockLeftDeg = leftDeg;
+            HeadingLockRightDeg = rightDeg;
+        }
+
+        public void ClearHeadingLock() { HeadingLockUntil = float.NegativeInfinity; }
+
         public MovementContext()
         {
             Jump.Clear();

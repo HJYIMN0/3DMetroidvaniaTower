@@ -134,7 +134,8 @@ namespace Game.Movement
 
             if (ctx.Jump.Consume(jumpBufferTime))
             {
-                rb.linearVelocity = wallJump.Compute(_normal, _runDir);
+                rb.linearVelocity = wallJump.Compute(_normal, _runDir, ctx.MoveInputWorld);
+                wallJump.ApplyHeadingLock(ctx, _normal);
                 _exitRequested = true;
                 ctx.VerticalHandled = true;
                 return;
