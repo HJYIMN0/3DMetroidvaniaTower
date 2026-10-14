@@ -9,42 +9,44 @@ namespace Game.Movement
     public class WallRunModule : MovementModule
     {
         [Header("Refs")]
+        [Tooltip("Il sensore che individua il muro su cui il personaggio sta correndo.")]
         [SerializeField] private WallDetector wall;
 
         [Header("Entry")]
-        [Tooltip("Secondi minimi in aria prima di poter agganciare la parete (evita di agganciarsi subito dopo il salto da terra).")]
+        [Tooltip("Il tempo minimo che il personaggio deve trascorrere in aria prima di poter iniziare una corsa sul muro (evita agganci immediati appena ci si stacca da terra con un salto).")]
         [SerializeField, Min(0f)] private float minAirTime = 0.05f;
-        [Tooltip("Velocità orizzontale minima (m/s) per iniziare il wall run.")]
+        [Tooltip("La velocità di corsa minima (in metri al secondo) necessaria per agganciarsi al muro e iniziare la corsa.")]
         [SerializeField, Min(0f)] private float minEntrySpeed = 4f;
-        [Tooltip("Angolo massimo (gradi) tra la direzione dell'input e la parete per iniziare. 0 = parallelo, 90 = dritto contro la parete.")]
+        [Tooltip("L'angolo massimo (in gradi) tra la direzione in cui premi la levetta e l'orientamento del muro per poter iniziare. Valori bassi richiedono di correre perfettamente paralleli al muro; valori più alti consentono di agganciarsi anche con un'angolazione più diagonale.")]
         [SerializeField, Range(1f, 89f)] private float maxEntryAngle = 60f;
 
         [Header("Run")]
-        [Tooltip("Velocità (m/s) di corsa sulla parete.")]
+        [Tooltip("La velocità con cui il personaggio corre lungo il muro.")]
         [SerializeField, Min(0f)] private float wallRunSpeed = 8f;
-        [Tooltip("Quanto rapidamente (m/s²) si raggiunge wallRunSpeed.")]
+
+        [Tooltip("La rapidità con cui il personaggio accelera fino a raggiungere la velocità di corsa sul muro.")]
         [SerializeField, Min(0f)] private float wallRunAcceleration = 30f;
-        [Tooltip("Durata massima (s) del wall run.")]
+        [Tooltip("Il tempo massimo (in secondi) che il personaggio può trascorrere correndo ininterrottamente sullo stesso muro.")]
         [SerializeField, Min(0.1f)] private float maxDuration = 1.5f;
-        [Tooltip("Spinta verso l'alto (m/s) all'aggancio: dà la sensazione di 'salire' sulla parete.")]
+        [Tooltip("Una piccola spinta verso l'alto applicata all'inizio della corsa per dare una sensazione di slancio ed energia quando si sale sul muro.")]
         [SerializeField] private float entryUpBoost = 2.5f;
-        [Tooltip("Gravità (m/s²) durante il wall run.")]
+        [Tooltip("La forza di gravità ridotta applicata durante la corsa sul muro per rallentare la caduta.")]
         [SerializeField, Min(0f)] private float wallGravity = 8f;
-        [Tooltip("Velocità massima di caduta (m/s) durante il wall run.")]
+        [Tooltip("La velocità massima di caduta consentita mentre si corre sul muro.")]
         [SerializeField, Min(0f)] private float maxFallSpeed = 6f;
-        [Tooltip("Velocità (m/s) verso la parete per restare a contatto.")]
+        [Tooltip("La forza con cui il personaggio viene tenuto incollato al muro per impedirgli di scivolare via lateralmente.")]
         [SerializeField, Min(0f)] private float stickSpeed = 1.5f;
-        [Tooltip("Se true il wall run continua solo finché premi nella direzione di corsa.")]
+        [Tooltip("Se attivo, la corsa sul muro continua solo se il giocatore continua a premere la levetta nella direzione della corsa.")]
         [SerializeField] private bool requireInput = true;
-        [Tooltip("Secondi di tolleranza se la parete sparisce momentaneamente (es. giunti tra muri).")]
+        [Tooltip("Un margine di tolleranza (in secondi) per evitare che il personaggio si stacchi se il sensore perde il contatto con il muro per un breve istante (es. tra una mattonella e l'altra).")]
         [SerializeField, Min(0f)] private float wallLostGrace = 0.12f;
 
         [Header("Exit")]
-        [Tooltip("Secondi dopo l'uscita in cui nessun modulo parete può riagganciarsi.")]
+        [Tooltip("Il tempo di attesa (in secondi) prima di potersi riagganciare a un muro dopo essere scesi o saltati via dalla corsa.")]
         [SerializeField, Min(0f)] private float reattachCooldown = 0.4f;
-        [Tooltip("Concede un salto in aria all'aggancio.")]
+        [Tooltip("Se attivo, iniziare a correre sul muro assegna immediatamente un salto in aria extra.")]
         [SerializeField] private bool grantsAirJump = true;
-        [Tooltip("Secondi per cui il salto premuto in anticipo viene ricordato.")]
+        [Tooltip("Per quanti secondi il gioco ricorda la pressione del tasto di salto se premuto leggermente prima di staccarsi o saltare.")]
         [SerializeField, Min(0f)] private float jumpBufferTime = 0.15f;
         [SerializeField] private WallJumpSettings wallJump = new WallJumpSettings();
 
