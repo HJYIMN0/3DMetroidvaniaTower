@@ -58,19 +58,49 @@ namespace Game.Movement
         public float HeadingLockCenterDeg;
         public float HeadingLockLeftDeg;
         public float HeadingLockRightDeg;
+        public bool HeadingLockUntilApex;
+        private bool _headingLockActive;
 
-        /// <summary>True while the air heading must stay inside the lock zone (center +/- left/right degrees).</summary>
-        public bool HeadingLocked => Time.time < HeadingLockUntil;
-
-        public void LockHeading(float seconds, float centerDeg, float leftDeg, float rightDeg)
+        public void LockHeading(float seconds, float centerDeg, float leftDeg, float rightDeg, bool untilApex)
         {
             HeadingLockUntil = Time.time + seconds;
             HeadingLockCenterDeg = centerDeg;
             HeadingLockLeftDeg = leftDeg;
             HeadingLockRightDeg = rightDeg;
+            HeadingLockUntilApex = untilApex;
+            _headingLockActive = true;
         }
 
-        public void ClearHeadingLock() { HeadingLockUntil = float.NegativeInfinity; }
+        /// <summary>
+        /// True while the air heading must stay inside the lock zone (center +/- left/right degrees):
+        /// for the lock time, and (if enabled) as long as the player is still rising.
+        /// </summary>
+        public bool IsHeadingLocked(float verticalVelocity)
+        {
+            if (!_headingLockActive) return false;
+            if (Time.time < HeadingLockUntil) return true;
+            if (HeadingLockUntilApex && verticalVelocity > 0f) return true;
+            _headingLockActive = false;
+            return false;
+        }
+
+        public void ClearHeadingLock()
+        {
+            _headingLockActive = false;
+            HeadingLockUntil = float.NegativeInfinity;
+        }
+
+        // ---- Last wall jumped from ----
+        /// <summary>
+        /// The wall the player last wall-jumped from. Wall modules refuse to grab / run on / jump from it again.
+        /// Overwritten by the next wall jump (from a different wall) and set to null when the player touches ground.
+        /// </summary>
+        public GameObject LastJumpedWall;
+
+        public bool IsBlockedWall(GameObject wallObject)
+        {
+            return wallObject != null && LastJumpedWall != null && wallObject == LastJumpedWall;
+        }
 
         public MovementContext()
         {

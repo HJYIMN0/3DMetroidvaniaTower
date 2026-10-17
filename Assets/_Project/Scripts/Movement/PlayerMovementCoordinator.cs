@@ -13,29 +13,26 @@ namespace Game.Movement
     public class PlayerMovementCoordinator : AbstractUnitMover
     {
         [Header("Input")]
-        [Tooltip("Da dove il personaggio riceve i comandi e la levetta di movimento. Di solito si collega in automatico allo stesso personaggio.")]
+        [Tooltip("Sorgente di MoveInput e comandi. Se vuoto viene preso dal GameObject.")]
         [SerializeField] private InputReader inputReader;
-        [Tooltip("La telecamera che guida la direzione in cui il personaggio cammina (es. la telecamera principale di gioco). Se vuoto, usa quella di default.")]
+        [Tooltip("Camera per il movimento camera-relative (la Main Camera gestita da Cinemachine). Se vuoto usa Camera.main.")]
         [SerializeField] private Transform cameraTransform;
-        [Tooltip("Attiva se vuoi che il personaggio memorizzi localmente quando premi il tasto della schivata. Spegnilo solo se la schivata è gestita interamente da un sistema di combattimento esterno.")]
+        [Tooltip("Se true, il comando Dodge dell'InputReader viene bufferizzato qui. Mettilo a false quando sarà il combat manager a chiamare il dodge.")]
         [SerializeField] private bool recordDodgeCommands = true;
 
         [Header("Detectors")]
-        [Tooltip("Sensore che controlla se il personaggio sta toccando terra o si trova in aria.")]
         [SerializeField] private GroundDetector ground;
-        [Tooltip("Sensore che individua i muri e le pareti vicine.")]
         [SerializeField] private WallDetector wall;
-        [Tooltip("Sensore che individua i bordi e le sporgenze su cui ci si può arrampicare.")]
         [SerializeField] private LedgeDetector ledge;
 
         [Header("Fallback gravity")]
-        [Tooltip("Quanto velocemente il personaggio viene tirato giù verso terra se nessun altro salto o abilità speciale sta gestendo la caduta.")]
+        [Tooltip("Gravità (m/s²) usata solo se nessun modulo verticale (JumpModule) gestisce la Y.")]
         [SerializeField, Min(0f)] private float fallbackGravity = 30f;
-        [Tooltip("La velocità massima che il personaggio può raggiungere mentre cade nel vuoto.")]
+        [Tooltip("Velocità massima di caduta (m/s) del fallback.")]
         [SerializeField, Min(0f)] private float fallbackMaxFallSpeed = 25f;
 
         [Header("Debug")]
-        [Tooltip("Se acceso, scrive nella schermata di debug di Unity ogni volta che il personaggio cambia lo stato di movimento principale (es. da corsa a scivolamento su muro).")]
+        [Tooltip("Logga in Console ogni cambio di modulo esclusivo.")]
         [SerializeField] private bool logTransitions = true;
 
         private readonly MovementContext _ctx = new MovementContext();
@@ -111,6 +108,7 @@ namespace Game.Movement
             if (ground != null) ground.Refresh();
             _ctx.IsGrounded = ground != null && ground.IsGrounded;
             _ctx.AirTime = _ctx.IsGrounded ? 0f : _ctx.AirTime + dt;
+            if (_ctx.IsGrounded) _ctx.LastJumpedWall = null;   // touching ground (GroundDetector mask) frees every wall again
             if (wall != null) wall.Refresh();
             if (ledge != null) ledge.Refresh(_ctx.Facing);
 

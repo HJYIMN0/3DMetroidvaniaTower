@@ -12,57 +12,57 @@ namespace Game.Movement
     public class WallSlideModule : MovementModule
     {
         [Header("Refs")]
-        [Tooltip("Il sensore che legge a quale muro si sta appoggiando il personaggio.")]
         [SerializeField] private WallDetector wall;
 
         [Header("Entry")]
-        [Tooltip("Se attivo, il personaggio si aggancia da solo quando tocca un muro in aria. Se spento, serve premere il tasto di aggancio (che comunque resta sempre attivo se premuto).")]
+        [Tooltip("true = ti agganci da solo quando raggiungi la parete in aria. false = serve il tasto GrabWall. Il tasto GrabWall funziona sempre.")]
         [SerializeField] private bool autoSlide = true;
-        [Tooltip("Se l'aggancio automatico è attivo, richiede che il giocatore stia muovendo la levetta verso il muro per evitare che si attacchi per sbaglio mentre ci cammina di fianco.")]
+        [Tooltip("Con Auto Slide: ti agganci solo se stai premendo verso la parete (evita agganci accidentali passando di lato).")]
         [SerializeField] private bool requireInputTowardWall = true;
-        [Tooltip("Quanta spinta con la levetta verso il muro è necessaria (da 0 a 1) per far scattare l'aggancio automatico.")]
+        [Tooltip("Quanto deve essere deciso l'input verso la parete (0..1) per agganciarsi.")]
         [SerializeField, Range(0f, 1f)] private float inputTowardWallThreshold = 0.3f;
-        [Tooltip("Per quanti secondi il gioco si ricorda se hai premuto il tasto di aggancio leggermente in anticipo.")]
+        [Tooltip("Secondi per cui il tasto GrabWall premuto in anticipo viene ricordato.")]
         [SerializeField, Min(0f)] private float grabBufferTime = 0.2f;
-        [Tooltip("Impedisce di agganciarsi al muro se il personaggio sta saltando verso l'alto troppo velocemente.")]
+        [Tooltip("Non si aggancia se stai salendo più veloce di così (m/s).")]
         [SerializeField] private float maxUpwardSpeedToStart = 2f;
-        [Tooltip("Tempo minimo che il personaggio deve passare in aria prima di poter effettuare l'aggancio a un muro.")]
+        [Tooltip("Secondi minimi in aria prima di potersi agganciare.")]
         [SerializeField, Min(0f)] private float minAirTime = 0.05f;
 
         [Header("Hang (aggancio)")]
-        [Tooltip("Per quanti secondi il personaggio resta immobile e sospeso sul muro (senza cadere) appena si aggancia, prima di iniziare a scivolare. Metti 0 per iniziare a scivolare subito.")]
+        [Tooltip("Secondi in cui il player resta bloccato in posizione appena agganciato (nessuna gravità), prima di iniziare a scivolare. 0 = niente sosta.")]
         [SerializeField, Min(0f)] private float hangDuration = 0.4f;
 
         [Header("Slide")]
-        [Tooltip("La velocità iniziale con cui il personaggio comincia a scivolare giù lungo il muro.")]
+        [Tooltip("Velocità di discesa (m/s) all'inizio dello slide.")]
         [SerializeField, Min(0f)] private float minSlideSpeed = 1.5f;
-        [Tooltip("La velocità massima che la scivolata può raggiungere lasciandosi cadere lungo il muro.")]
+        [Tooltip("Velocità di discesa massima (m/s).")]
         [SerializeField, Min(0f)] private float maxSlideSpeed = 6f;
-        [Tooltip("Quanto velocemente il personaggio accelera mentre scivola giù (passando dalla velocità minima alla massima).")]
+        [Tooltip("Accelerazione (m/s²) della discesa.")]
         [SerializeField, Min(0f)] private float slideAcceleration = 4f;
-        [Tooltip("Il tempo massimo in secondi che il personaggio può passare a scivolare sullo stesso muro prima di staccarsi automaticamente.")]
+        [Tooltip("Durata massima (s) dello slide, dopo la sosta di aggancio.")]
         [SerializeField, Min(0.1f)] private float maxDuration = 5f;
-        [Tooltip("La forza con cui il personaggio viene tenuto incollato al muro per non staccarsi per inerzia.")]
+        [Tooltip("Velocità (m/s) verso la parete per restare a contatto.")]
         [SerializeField, Min(0f)] private float stickSpeed = 1f;
-        [Tooltip("Quanto dolcemente o bruscamente il personaggio si attacca alla superficie del muro.")]
+        [Tooltip("Quanto rapidamente (m/s²) la velocità orizzontale converge verso lo stick.")]
         [SerializeField, Min(0f)] private float horizontalDamping = 20f;
-        [Tooltip("Un piccolo margine di tempo per evitare che il personaggio si stacchi se il muro perde il contatto per un istante.")]
+        [Tooltip("Secondi di tolleranza se la parete sparisce momentaneamente.")]
         [SerializeField, Min(0f)] private float wallLostGrace = 0.1f;
 
         [Header("Exit / Wall jump")]
-        [Tooltip("Se attivo, tirare la levetta nella direzione opposta al muro fa staccare e mollare la presa istantaneamente.")]
+        [Tooltip("Spingere lontano dalla parete fa mollare la presa (durante sosta e slide).")]
         [SerializeField] private bool dropByPushingAway = true;
-        [Tooltip("Il tempo di attesa prima di potersi riagganciare allo stesso muro dopo essersi staccati. Valori bassi (es. 0.1) permettono di scalare rapidamente la parete saltando in continuazione; valori alti obbligano a salti più distanziati e cadenzati.")]
+        [Tooltip("Secondi dopo l'uscita in cui nessun modulo parete può riagganciarsi. Basso (0.1) = si scavalca la parete saltando di continuo; alto = salti più 'staccati'.")]
         [SerializeField, Min(0f)] private float reattachCooldown = 0.2f;
-        [Tooltip("Se attivo, agganciarsi a un muro conferisce immediatamente un salto extra utilizzabile in aria.")]
+        [Tooltip("Concede un salto in aria all'aggancio.")]
         [SerializeField] private bool grantsAirJump = true;
-        [Tooltip("Per quanti secondi il gioco ricorda la pressione del tasto di salto se premuto leggermente prima di toccare il muro.")]
+        [Tooltip("Secondi per cui il salto premuto in anticipo viene ricordato.")]
         [SerializeField, Min(0f)] private float jumpBufferTime = 0.15f;
         [SerializeField] private WallJumpSettings wallJump = new WallJumpSettings { alongSpeed = 0f };
 
         private float _elapsed, _lostTimer, _speed;
         private bool _exitRequested;
         private Vector3 _normal;
+        private GameObject _wallObject;   // the wall we are attached to (remembered when we jump from it)
 
         public bool IsSliding => IsActive && _elapsed >= hangDuration;
         public bool IsHanging => IsActive && _elapsed < hangDuration;
@@ -94,6 +94,7 @@ namespace Game.Movement
 
             if (!ctx.WallContactAllowed || ctx.IsGrounded || ctx.AirTime < minAirTime) return false;
             if (!wall.HasWall) return false;
+            if (ctx.IsBlockedWall(wall.WallObject)) return false;   // same wall as the last wall jump
             if (rb.linearVelocity.y > maxUpwardSpeedToStart) return false;
 
             bool pressedGrab = ctx.GrabWall.Peek(grabBufferTime);
@@ -106,6 +107,7 @@ namespace Game.Movement
         protected override void OnEnter(MovementContext ctx)
         {
             _normal = Flat(wall.WallNormal).normalized;
+            _wallObject = wall.WallObject;
             _speed = minSlideSpeed;
             _elapsed = 0f;
             _lostTimer = 0f;
@@ -123,6 +125,7 @@ namespace Game.Movement
             {
                 _lostTimer = 0f;
                 _normal = Flat(wall.WallNormal).normalized;
+                _wallObject = wall.WallObject;
             }
             else
             {
@@ -132,8 +135,10 @@ namespace Game.Movement
             // Wall jump: allowed during the hang and during the slide.
             if (ctx.Jump.Consume(jumpBufferTime))
             {
-                rb.linearVelocity = wallJump.Compute(_normal, Vector3.zero, ctx.MoveInputWorld);
-                wallJump.ApplyHeadingLock(ctx, _normal);
+                Vector3 away = wallJump.GetAwayDirection(_normal, transform);
+                rb.linearVelocity = wallJump.Compute(away, Vector3.zero, ctx.MoveInputWorld);
+                wallJump.ApplyHeadingLock(ctx, away);
+                ctx.LastJumpedWall = _wallObject;   // this wall cannot be grabbed or jumped from again until another wall jump or the ground
                 _exitRequested = true;
                 ctx.VerticalHandled = true;
                 return;
@@ -169,7 +174,9 @@ namespace Game.Movement
             Gizmos.color = Color.red;
             Gizmos.DrawRay(p, _normal);
 
-            // wall jump control zone (left / right limits)
+            // wall jump direction (snapped to the player's axes) and optional left / right zone
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(p, wallJump.GetAwayDirection(_normal, transform) * 2f);
             Gizmos.color = Color.green;
             Gizmos.DrawRay(p, Quaternion.AngleAxis(-wallJump.maxAngleLeft, Vector3.up) * _normal * 1.5f);
             Gizmos.DrawRay(p, Quaternion.AngleAxis(wallJump.maxAngleRight, Vector3.up) * _normal * 1.5f);

@@ -34,6 +34,9 @@ namespace Game.Movement
         public float WallDistance { get; private set; }
         public RaycastHit WallHit { get; private set; }
 
+        /// <summary>GameObject of the nearest wall (null if there is none). Used to remember the last wall jumped from.</summary>
+        public GameObject WallObject => HasWall && WallHit.collider != null ? WallHit.collider.gameObject : null;
+
         public System.Action<RaycastHit> OnWallEnter;
         public System.Action OnWallExit;
 

@@ -58,7 +58,7 @@ namespace Game.Movement
 
             // After a wall jump the heading must stay inside the control zone: speed is kept, only steering is allowed.
             if (ctx.IsGrounded) ctx.ClearHeadingLock();
-            if (ctx.HeadingLocked)
+            if (ctx.IsHeadingLocked(rb.linearVelocity.y))
             {
                 TickLocked(ctx, dt);
                 return;

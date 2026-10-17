@@ -123,6 +123,9 @@ namespace Game.Movement
                    .Append(_jump.LastCoyoteDelay >= 0f ? _jump.LastCoyoteDelay.ToString("F3") + " s" : "-").Append('\n');
             }
 
+            GameObject lastWall = coordinator.Context.LastJumpedWall;
+            _sb.Append("Last wall jumped: ").Append(lastWall != null ? lastWall.name : "-").Append(" (blocked until ground / another wall jump)\n");
+
             _sb.Append("Modules:\n");
             MovementModule[] modules = coordinator.Modules;
             for (int i = 0; i < modules.Length; i++)

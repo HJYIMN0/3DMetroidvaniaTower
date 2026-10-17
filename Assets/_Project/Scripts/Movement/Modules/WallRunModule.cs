@@ -9,50 +9,49 @@ namespace Game.Movement
     public class WallRunModule : MovementModule
     {
         [Header("Refs")]
-        [Tooltip("Il sensore che individua il muro su cui il personaggio sta correndo.")]
         [SerializeField] private WallDetector wall;
 
         [Header("Entry")]
-        [Tooltip("Il tempo minimo che il personaggio deve trascorrere in aria prima di poter iniziare una corsa sul muro (evita agganci immediati appena ci si stacca da terra con un salto).")]
+        [Tooltip("Secondi minimi in aria prima di poter agganciare la parete (evita di agganciarsi subito dopo il salto da terra).")]
         [SerializeField, Min(0f)] private float minAirTime = 0.05f;
-        [Tooltip("La velocità di corsa minima (in metri al secondo) necessaria per agganciarsi al muro e iniziare la corsa.")]
+        [Tooltip("Velocità orizzontale minima (m/s) per iniziare il wall run.")]
         [SerializeField, Min(0f)] private float minEntrySpeed = 4f;
-        [Tooltip("L'angolo massimo (in gradi) tra la direzione in cui premi la levetta e l'orientamento del muro per poter iniziare. Valori bassi richiedono di correre perfettamente paralleli al muro; valori più alti consentono di agganciarsi anche con un'angolazione più diagonale.")]
+        [Tooltip("Angolo massimo (gradi) tra la direzione dell'input e la parete per iniziare. 0 = parallelo, 90 = dritto contro la parete.")]
         [SerializeField, Range(1f, 89f)] private float maxEntryAngle = 60f;
 
         [Header("Run")]
-        [Tooltip("La velocità con cui il personaggio corre lungo il muro.")]
+        [Tooltip("Velocità (m/s) di corsa sulla parete.")]
         [SerializeField, Min(0f)] private float wallRunSpeed = 8f;
-
-        [Tooltip("La rapidità con cui il personaggio accelera fino a raggiungere la velocità di corsa sul muro.")]
+        [Tooltip("Quanto rapidamente (m/s²) si raggiunge wallRunSpeed.")]
         [SerializeField, Min(0f)] private float wallRunAcceleration = 30f;
-        [Tooltip("Il tempo massimo (in secondi) che il personaggio può trascorrere correndo ininterrottamente sullo stesso muro.")]
+        [Tooltip("Durata massima (s) del wall run.")]
         [SerializeField, Min(0.1f)] private float maxDuration = 1.5f;
-        [Tooltip("Una piccola spinta verso l'alto applicata all'inizio della corsa per dare una sensazione di slancio ed energia quando si sale sul muro.")]
+        [Tooltip("Spinta verso l'alto (m/s) all'aggancio: dà la sensazione di 'salire' sulla parete.")]
         [SerializeField] private float entryUpBoost = 2.5f;
-        [Tooltip("La forza di gravità ridotta applicata durante la corsa sul muro per rallentare la caduta.")]
+        [Tooltip("Gravità (m/s²) durante il wall run.")]
         [SerializeField, Min(0f)] private float wallGravity = 8f;
-        [Tooltip("La velocità massima di caduta consentita mentre si corre sul muro.")]
+        [Tooltip("Velocità massima di caduta (m/s) durante il wall run.")]
         [SerializeField, Min(0f)] private float maxFallSpeed = 6f;
-        [Tooltip("La forza con cui il personaggio viene tenuto incollato al muro per impedirgli di scivolare via lateralmente.")]
+        [Tooltip("Velocità (m/s) verso la parete per restare a contatto.")]
         [SerializeField, Min(0f)] private float stickSpeed = 1.5f;
-        [Tooltip("Se attivo, la corsa sul muro continua solo se il giocatore continua a premere la levetta nella direzione della corsa.")]
+        [Tooltip("Se true il wall run continua solo finché premi nella direzione di corsa.")]
         [SerializeField] private bool requireInput = true;
-        [Tooltip("Un margine di tolleranza (in secondi) per evitare che il personaggio si stacchi se il sensore perde il contatto con il muro per un breve istante (es. tra una mattonella e l'altra).")]
+        [Tooltip("Secondi di tolleranza se la parete sparisce momentaneamente (es. giunti tra muri).")]
         [SerializeField, Min(0f)] private float wallLostGrace = 0.12f;
 
         [Header("Exit")]
-        [Tooltip("Il tempo di attesa (in secondi) prima di potersi riagganciare a un muro dopo essere scesi o saltati via dalla corsa.")]
+        [Tooltip("Secondi dopo l'uscita in cui nessun modulo parete può riagganciarsi.")]
         [SerializeField, Min(0f)] private float reattachCooldown = 0.4f;
-        [Tooltip("Se attivo, iniziare a correre sul muro assegna immediatamente un salto in aria extra.")]
+        [Tooltip("Concede un salto in aria all'aggancio.")]
         [SerializeField] private bool grantsAirJump = true;
-        [Tooltip("Per quanti secondi il gioco ricorda la pressione del tasto di salto se premuto leggermente prima di staccarsi o saltare.")]
+        [Tooltip("Secondi per cui il salto premuto in anticipo viene ricordato.")]
         [SerializeField, Min(0f)] private float jumpBufferTime = 0.15f;
         [SerializeField] private WallJumpSettings wallJump = new WallJumpSettings();
 
         private float _elapsed, _lostTimer, _speed;
         private bool _exitRequested;
         private Vector3 _runDir, _normal;
+        private GameObject _wallObject;   // the wall we are running on (remembered when we jump from it)
 
         public override bool Exclusive => true;
         protected override int DefaultPriority => 80;
@@ -79,6 +78,7 @@ namespace Game.Movement
             }
 
             if (!ctx.WallContactAllowed || ctx.IsGrounded || ctx.AirTime < minAirTime) return false;
+            if (ctx.IsBlockedWall(wall.WallObject)) return false;   // same wall as the last wall jump
             if (Flat(rb.linearVelocity).magnitude < minEntrySpeed) return false;
             return TryGetRunDirection(ctx, out _);
         }
@@ -106,6 +106,7 @@ namespace Game.Movement
         {
             TryGetRunDirection(ctx, out _runDir);
             _normal = Flat(wall.WallNormal).normalized;
+            _wallObject = wall.WallObject;
 
             Vector3 v = rb.linearVelocity;
             _speed = Mathf.Max(0f, Vector3.Dot(Flat(v), _runDir));
@@ -125,6 +126,7 @@ namespace Game.Movement
             {
                 _lostTimer = 0f;
                 _normal = Flat(wall.WallNormal).normalized;
+                _wallObject = wall.WallObject;
                 Vector3 t = Vector3.Cross(Vector3.up, _normal);
                 if (Vector3.Dot(t, _runDir) < 0f) t = -t;
                 _runDir = t;
@@ -136,8 +138,10 @@ namespace Game.Movement
 
             if (ctx.Jump.Consume(jumpBufferTime))
             {
-                rb.linearVelocity = wallJump.Compute(_normal, _runDir, ctx.MoveInputWorld);
-                wallJump.ApplyHeadingLock(ctx, _normal);
+                Vector3 away = wallJump.GetAwayDirection(_normal, transform);
+                rb.linearVelocity = wallJump.Compute(away, _runDir, ctx.MoveInputWorld);
+                wallJump.ApplyHeadingLock(ctx, away);
+                ctx.LastJumpedWall = _wallObject;   // this wall cannot be grabbed, run on or jumped from again until another wall jump or the ground
                 _exitRequested = true;
                 ctx.VerticalHandled = true;
                 return;
