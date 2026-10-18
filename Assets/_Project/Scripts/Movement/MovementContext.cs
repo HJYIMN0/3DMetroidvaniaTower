@@ -84,6 +84,13 @@ namespace Game.Movement
             return false;
         }
 
+        /// <summary>Same as IsHeadingLocked but without side effects (for debug tools).</summary>
+        public bool PeekHeadingLocked(float verticalVelocity)
+        {
+            if (!_headingLockActive) return false;
+            return Time.time < HeadingLockUntil || (HeadingLockUntilApex && verticalVelocity > 0f);
+        }
+
         public void ClearHeadingLock()
         {
             _headingLockActive = false;
@@ -92,14 +99,14 @@ namespace Game.Movement
 
         // ---- Last wall jumped from ----
         /// <summary>
-        /// The wall the player last wall-jumped from. Wall modules refuse to grab / run on / jump from it again.
-        /// Overwritten by the next wall jump (from a different wall) and set to null when the player touches ground.
+        /// The last wall the player ran on or wall-jumped from. WallRunModule and WallSlideModule refuse to attach to it again.
+        /// Set to null when the player touches ground or attaches to a DIFFERENT wall.
         /// </summary>
-        public GameObject LastJumpedWall;
+        public GameObject LastWall;
 
         public bool IsBlockedWall(GameObject wallObject)
         {
-            return wallObject != null && LastJumpedWall != null && wallObject == LastJumpedWall;
+            return wallObject != null && LastWall != null && wallObject == LastWall;
         }
 
         public MovementContext()

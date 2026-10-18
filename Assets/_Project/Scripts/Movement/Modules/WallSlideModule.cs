@@ -108,6 +108,7 @@ namespace Game.Movement
         {
             _normal = Flat(wall.WallNormal).normalized;
             _wallObject = wall.WallObject;
+            ctx.LastWall = null;   // attaching to a different wall frees the one used before (CanExecute already refused the same wall)
             _speed = minSlideSpeed;
             _elapsed = 0f;
             _lostTimer = 0f;
@@ -138,7 +139,7 @@ namespace Game.Movement
                 Vector3 away = wallJump.GetAwayDirection(_normal, transform);
                 rb.linearVelocity = wallJump.Compute(away, Vector3.zero, ctx.MoveInputWorld);
                 wallJump.ApplyHeadingLock(ctx, away);
-                ctx.LastJumpedWall = _wallObject;   // this wall cannot be grabbed or jumped from again until another wall jump or the ground
+                ctx.LastWall = _wallObject;   // this wall cannot be grabbed or jumped from again until another wall jump or the ground
                 _exitRequested = true;
                 ctx.VerticalHandled = true;
                 return;

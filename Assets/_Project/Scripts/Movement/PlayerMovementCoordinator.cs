@@ -40,6 +40,11 @@ namespace Game.Movement
         private MovementModule _active;
         private Vector3 _publicMoveInput;
 
+        /// <summary>Raised at the end of every FixedUpdate, after all modules ran (used by MovementRecorder).</summary>
+        public event Action<MovementContext> OnTickCompleted;
+        /// <summary>Raised when the exclusive module changes: (previous, next). Either can be null.</summary>
+        public event Action<MovementModule, MovementModule> OnModuleChanged;
+
         public MovementContext Context => _ctx;
         public MovementModule[] Modules => _modules;
         /// <summary>The exclusive module owning the current tick, or null.</summary>
@@ -108,7 +113,7 @@ namespace Game.Movement
             if (ground != null) ground.Refresh();
             _ctx.IsGrounded = ground != null && ground.IsGrounded;
             _ctx.AirTime = _ctx.IsGrounded ? 0f : _ctx.AirTime + dt;
-            if (_ctx.IsGrounded) _ctx.LastJumpedWall = null;   // touching ground (GroundDetector mask) frees every wall again
+            if (_ctx.IsGrounded) _ctx.LastWall = null;   // touching ground (GroundDetector mask) frees every wall again
             if (wall != null) wall.Refresh();
             if (ledge != null) ledge.Refresh(_ctx.Facing);
 
@@ -122,6 +127,8 @@ namespace Game.Movement
             if (!_ctx.VerticalHandled) ApplyFallbackGravity(dt);
 
             _publicMoveInput = _active != null ? Vector3.zero : _ctx.MoveInputWorld;
+
+            OnTickCompleted?.Invoke(_ctx);
         }
 
         private void BuildInput()
@@ -194,6 +201,7 @@ namespace Game.Movement
             if (prev != null) prev.Exit(_ctx);
             _active = next;
             if (_active != null) _active.Enter(_ctx);
+            OnModuleChanged?.Invoke(prev, _active);
 
             if (logTransitions)
             {
