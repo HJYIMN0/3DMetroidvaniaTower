@@ -43,10 +43,11 @@ Transform:
   m_GameObject: {fileID: 7085578250770896605}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.26, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5094844543968525526}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8806892888288901071
@@ -64,7 +65,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7085578250770896605}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -125,10 +126,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.24469203
   m_Height: 2
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0.01367408, y: 0, z: 0.03141862}
 --- !u!54 &3440931124460914461
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -220,6 +221,10 @@ MonoBehaviour:
   skin: 0.05
   radiusShrink: 0.03
   maxSlopeAngle: 55
+  blockSteepSurfaces: 1
+  steepCastLift: 0.1
+  steepCastSkin: 0.05
+  steepCastRadiusShrink: 0.02
 --- !u!114 &2463894991079215671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,6 +341,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   timeToChangeDirection: 0.1
   airControl: 0.8
+  animatorBridge: {fileID: 1273092332202605458}
   currentSpeed: 0
   ramp: 0
   headingDegrees: 0
@@ -609,3 +615,171 @@ MonoBehaviour:
   markBugAction: {fileID: -7908042664312566974, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
   dumpOnExit: 1
   printToConsole: 1
+--- !u!1001 &4701264755517152061
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6613957870928541071}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.038
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.836
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.041
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_Name
+      value: X Bot
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4c6f43bea0022414a91d320db8d9fe1b, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1273092332202605458}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 362691869162226773}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 187738376596927119}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3007791398900937296}
+  m_SourcePrefab: {fileID: 100100000, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+--- !u!95 &1176753191378314924 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+  m_PrefabInstance: {fileID: 4701264755517152061}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5094844543968525526 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+  m_PrefabInstance: {fileID: 4701264755517152061}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5620306186372179564 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8cbf5736573dbf94a829123743459b9f, type: 3}
+  m_PrefabInstance: {fileID: 4701264755517152061}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1273092332202605458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5620306186372179564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1816bee532c53542a3df82dc2c732c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Animation.AnimatorBridge
+  animator: {fileID: 1176753191378314924}
+  phaseProfile: {fileID: 0}
+  speedParam: Speed
+  groundedParam: Grounded
+  verticalVelocityParam: VerticalVelocity
+  jumpParam: Jump
+  attackParam: Attack
+--- !u!114 &362691869162226773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5620306186372179564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c891f6b8a8aa6244d837b8aca25910b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Animation.AnimationTuner
+  bridge: {fileID: 1273092332202605458}
+  globalSpeed: 1
+  isRealTime: 0
+--- !u!114 &187738376596927119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5620306186372179564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82b9f8bc61f436640a608cd75d7b1a3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Animation.PlayerAnimationDriver
+  bridge: {fileID: 1273092332202605458}
+  coordinator: {fileID: 7603272007517093174}
+  rb: {fileID: 3440931124460914461}
+  inputReader: {fileID: 709910031395477912}
+--- !u!114 &3007791398900937296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5620306186372179564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a63d37b1c76bd848a76b91fbe717036, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Animation.AnimationDebugger
+  animator: {fileID: 1176753191378314924}
+  bridge: {fileID: 1273092332202605458}
+  coordinator: {fileID: 7603272007517093174}
+  locomotion: {fileID: 9223062402877740874}
+  dumpKey: 290
+  enableHotkey: 1
+  dumpOnStateChange: 0
+  layerToInspect: 0
+  knownStateNames:
+  - Locomotion
+  - Jump_Preparation
+  - Jump_Ascending
+  - Jump_Contact
+  - Jump_Descending

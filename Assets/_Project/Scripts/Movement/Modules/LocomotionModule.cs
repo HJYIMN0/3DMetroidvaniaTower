@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Animation;
 
 namespace Game.Movement
 {
@@ -34,6 +35,10 @@ namespace Game.Movement
         [Tooltip("Controllo in aria. 1 = come a terra, 0 = nessun controllo (inerzia pura).")]
         [SerializeField, Range(0f, 1f)] private float airControl = 0.8f;
 
+        [Header("Animation")]
+        [Tooltip("AnimatorBridge sullo stesso GameObject. Riceve Speed normalizzato (0..1) per il BlendTree.")]
+        [SerializeField] private AnimatorBridge animatorBridge;
+
         [Header("Runtime (read-only)")]
         [SerializeField] private float currentSpeed;
         [SerializeField] private float ramp;
@@ -52,22 +57,23 @@ namespace Game.Movement
 
         public override void Tick(MovementContext ctx, float dt)
         {
-            // If an exclusive module owned the previous ticks, our internal state is stale: re-sync from the Rigidbody.
             if (Time.fixedTime - _lastTickTime > dt * 1.5f) SyncFromRigidbody();
             _lastTickTime = Time.fixedTime;
 
-            // Standing on a surface steeper than the walkable limit: no horizontal control, physics slides the player down.
             if (ctx.OnSteepSurface)
             {
                 SyncFromRigidbody();
+                FeedAnimator();
+                ApplyRotation();
                 return;
             }
 
-            // After a wall jump the heading must stay inside the control zone: speed is kept, only steering is allowed.
             if (ctx.IsGrounded) ctx.ClearHeadingLock();
             if (ctx.IsHeadingLocked(rb.linearVelocity.y))
             {
                 TickLocked(ctx, dt);
+                FeedAnimator();
+                ApplyRotation();
                 return;
             }
 
@@ -79,12 +85,10 @@ namespace Game.Movement
             float targetSpeed = hasInput ? (running ? runSpeed : walkSpeed) : 0f;
             float rampTarget = Mathf.Clamp01(targetSpeed / runSpeed);
 
-            // ---- speed ramp (independent from direction) ----
             float time = ramp > rampTarget ? timeToStop : timeToMaxSpeed;
             float rate = time > 0.0001f ? 1f / time : 1000f;
             ramp = Mathf.MoveTowards(ramp, rampTarget, rate * airMul * dt);
 
-            // ---- direction change (independent from speed) ----
             if (hasInput)
             {
                 float desired = Mathf.Atan2(input.x, input.z) * Mathf.Rad2Deg;
@@ -99,17 +103,29 @@ namespace Game.Movement
                 }
             }
 
-            // ---- apply: XZ only, Y is left to the vertical modules ----
             currentSpeed = Mathf.Max(0f, runSpeed * accelerationCurve.Evaluate(ramp));
             float rad = headingDegrees * Mathf.Deg2Rad;
             Vector3 dir = new Vector3(Mathf.Sin(rad), 0f, Mathf.Cos(rad));
 
             Vector3 v = rb.linearVelocity;
             rb.linearVelocity = new Vector3(dir.x * currentSpeed, v.y, dir.z * currentSpeed);
+
+            FeedAnimator();
+            ApplyRotation();
         }
 
-        // Heading-locked tick (after a wall jump): keeps the horizontal speed, lets the input steer the direction
-        // only inside the zone (center +/- left/right) set by the wall jump.
+        private void FeedAnimator()
+        {
+            if (animatorBridge == null) return;
+            animatorBridge.SetLocomotionSpeed(accelerationCurve.Evaluate(ramp));
+        }
+
+        /// <summary>Applica l'heading alla Transform, così il modello visivo segue la direzione di movimento.</summary>
+        private void ApplyRotation()
+        {
+            transform.rotation = Quaternion.Euler(0f, headingDegrees, 0f);
+        }
+
         private void TickLocked(MovementContext ctx, float dt)
         {
             Vector3 v = rb.linearVelocity;
@@ -135,7 +151,6 @@ namespace Game.Movement
                 rb.linearVelocity = new Vector3(Mathf.Sin(rad) * speed, v.y, Mathf.Cos(rad) * speed);
             }
 
-            // keep the internal state in sync so control resumes smoothly when the lock ends
             ramp = RampForSpeed(Mathf.Min(speed, runSpeed));
             currentSpeed = speed;
         }
@@ -155,7 +170,6 @@ namespace Game.Movement
             ramp = RampForSpeed(Mathf.Min(s, runSpeed));
         }
 
-        // Inverse of the curve (assumes it is monotonic): finds the ramp that produces 'speed'.
         private float RampForSpeed(float speed)
         {
             if (speed <= 0f) return 0f;
@@ -171,6 +185,7 @@ namespace Game.Movement
         protected override void Awake()
         {
             base.Awake();
+            if (animatorBridge == null) animatorBridge = GetComponent<AnimatorBridge>();
             Vector3 f = Flat(transform.forward);
             if (f.sqrMagnitude > 0.0001f) headingDegrees = Mathf.Atan2(f.x, f.z) * Mathf.Rad2Deg;
         }

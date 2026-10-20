@@ -18,6 +18,7 @@ namespace Game.Animation
         private void Awake()
         {
             if (bridge == null) bridge = GetComponent<AnimatorBridge>();
+            SetGlobalSpeed(globalSpeed);
         }
 
         public void SetGlobalSpeed(float speed)
