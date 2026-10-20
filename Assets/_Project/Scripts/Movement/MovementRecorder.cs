@@ -86,6 +86,8 @@ namespace Game.Movement
             public float groundDist;
             public Vector2 input;
             public bool jumpHeld;
+            public bool onSteep;
+            public bool steepBlocked;
             public bool hasWall;
             public Vector3 wallNormal;
             public string wallName;
@@ -266,6 +268,8 @@ namespace Game.Movement
             s.groundDist = _ground != null && ctx.IsGrounded ? _ground.GroundDistance : -1f;
             s.input = ctx.MoveInputRaw;
             s.jumpHeld = ctx.JumpHeld;
+            s.onSteep = ctx.OnSteepSurface;
+            s.steepBlocked = ctx.SteepBlocked;
             s.hasWall = _wall != null && _wall.HasWall;
             s.wallNormal = s.hasWall ? _wall.WallNormal : Vector3.zero;
             s.wallName = s.hasWall ? _wallNames.Get(_wall.WallObject) : "-";
@@ -492,7 +496,7 @@ namespace Game.Movement
         {
             sb.AppendLine("== SAMPLES (one row per physics tick, oldest first) ==");
             sb.AppendLine("columns: t ; module ; gnd(1=grounded) ; air(s) ; gDist ; input ; vW=velocity WRITTEN by modules ; vP=velocity after PHYSICS ; " +
-                          "dV=vP-vW ; pos ; dYextra=rise not explained by vW ; wall(name,normal) ; lastWall ; lock=heading locked ; jh=jump held ; coyote ; contacts(name:normal:impulse) ; flags");
+                          "dV=vP-vW ; pos ; dYextra=rise not explained by vW ; wall(name,normal) ; lastWall ; lock=heading locked ; jh=jump held ; steep=standing on a surface steeper than Max Slope Angle ; blk=steep block removed horizontal velocity ; coyote ; contacts(name:normal:impulse) ; flags");
 
             int start = (_head - _count + 1 + _ring.Length) % _ring.Length;
             float dt = Time.fixedDeltaTime;
@@ -509,7 +513,8 @@ namespace Game.Movement
                   .Append(V(s.writtenVel)).Append(';').Append(closed ? V(s.physVel) : "-").Append(';').Append(closed ? V(dv) : "-").Append(';')
                   .Append(V(s.pos)).Append(';').Append(closed ? F3(dyExtra) : "-").Append(';')
                   .Append(s.hasWall ? s.wallName + "," + V(s.wallNormal) : "-").Append(';').Append(s.lastWallName).Append(';')
-                  .Append(s.headingLocked ? '1' : '0').Append(';').Append(s.jumpHeld ? '1' : '0').Append(';').Append(F(s.coyote)).Append(';');
+                  .Append(s.headingLocked ? '1' : '0').Append(';').Append(s.jumpHeld ? '1' : '0').Append(';').Append(s.onSteep ? '1' : '0').Append(';').Append(s.steepBlocked ? '1' : '0').Append(';')
+                  .Append(F(s.coyote)).Append(';');
 
                 AppendContact(sb, s.contactCount > 0, s.c0);
                 AppendContact(sb, s.contactCount > 1, s.c1);

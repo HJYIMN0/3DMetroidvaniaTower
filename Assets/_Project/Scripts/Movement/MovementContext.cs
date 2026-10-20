@@ -53,6 +53,13 @@ namespace Game.Movement
         /// <summary>Set by a module that handled vertical velocity this tick. If false, the coordinator applies fallback gravity.</summary>
         public bool VerticalHandled;
 
+        // ---- Steep surfaces (written by the coordinator, read by LocomotionModule) ----
+        /// <summary>True while standing on a surface steeper than GroundDetector.MaxSlopeAngle: no horizontal control, physics slides the player.</summary>
+        public bool OnSteepSurface;
+        public Vector3 SteepNormal = Vector3.up;
+        /// <summary>True if this tick the coordinator removed horizontal velocity pushing into a steep surface.</summary>
+        public bool SteepBlocked;
+
         // ---- Heading lock (set by wall jumps, read by LocomotionModule) ----
         public float HeadingLockUntil = float.NegativeInfinity;
         public float HeadingLockCenterDeg;

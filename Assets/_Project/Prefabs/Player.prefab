@@ -1,0 +1,611 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7085578250770896605
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6613957870928541071}
+  - component: {fileID: 8806892888288901071}
+  - component: {fileID: 6159733103146182642}
+  - component: {fileID: 2039547995876545425}
+  - component: {fileID: 3440931124460914461}
+  - component: {fileID: 709910031395477912}
+  - component: {fileID: 2422666012213759527}
+  - component: {fileID: 2463894991079215671}
+  - component: {fileID: 8227494382685654552}
+  - component: {fileID: 7603272007517093174}
+  - component: {fileID: 9223062402877740874}
+  - component: {fileID: 8104613663179640731}
+  - component: {fileID: 5466424873315817923}
+  - component: {fileID: 532525779629202240}
+  - component: {fileID: 2799173161184684913}
+  - component: {fileID: 5262650638740333029}
+  - component: {fileID: 7560356610944161224}
+  - component: {fileID: 8545734276921433523}
+  - component: {fileID: 492935379474412314}
+  m_Layer: 3
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6613957870928541071
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.26, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &8806892888288901071
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &6159733103146182642
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &2039547995876545425
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Material: {fileID: 13400000, guid: ff7c9f0108aed4e468c161147bfc80ea, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &3440931124460914461
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 80
+  m_CollisionDetection: 1
+--- !u!114 &709910031395477912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca44414cf1c41424b8b9c495dc3ea5b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Input.InputReader
+  attackAction: {fileID: -7908042664312566974, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  parryAction: {fileID: 7206486282653370948, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  dodgeAction: {fileID: -7687635863663810299, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  jumpAction: {fileID: 1531964163347329223, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  grabWallAction: {fileID: -6393868299011572517, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  grabLedgeAction: {fileID: 8165214789630322730, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  moveAction: {fileID: -8245732656636786836, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  lookAction: {fileID: 9218188208422169878, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  attackSettings:
+    priority: 30
+    overridesLower: 0
+    immuneToOverride: 0
+  parrySettings:
+    priority: 100
+    overridesLower: 0
+    immuneToOverride: 1
+  dodgeSettings:
+    priority: 50
+    overridesLower: 1
+    immuneToOverride: 0
+  jumpSettings:
+    priority: 90
+    overridesLower: 0
+    immuneToOverride: 1
+  grabWallSettings:
+    priority: 90
+    overridesLower: 0
+    immuneToOverride: 1
+  grabLedgeSettings:
+    priority: 90
+    overridesLower: 0
+    immuneToOverride: 1
+--- !u!114 &2422666012213759527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e467f21826d27f49bfaacad36b13187, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.GroundDetector
+  capsule: {fileID: 2039547995876545425}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 256
+  checkDistance: 0.12
+  skin: 0.05
+  radiusShrink: 0.03
+  maxSlopeAngle: 55
+--- !u!114 &2463894991079215671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33347cc60ea5a5449bbd11d429d14083, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.WallDetector
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 64
+  checkDistance: 0.6
+  rayHeightMin: 0.4
+  rayHeightMax: 1.4
+  heightRayCount: 3
+  directionCount: 8
+  maxWallNormalY: 0.2
+--- !u!114 &8227494382685654552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d9ced68f308ca747ac9cca829fa301c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.LedgeDetector
+  ledgeMask:
+    serializedVersion: 2
+    m_Bits: 128
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  headHeight: 1.7
+  forwardCastDistance: 0.7
+  probeHeightAbove: 0.5
+  probeInset: 0.05
+  downCastDistance: 1.2
+  minLedgeHeight: 0.3
+  maxWallNormalY: 0.2
+  minTopNormalY: 0.7
+  clearanceHeight: 1.8
+  clearanceRadius: 0.3
+  clearanceForwardOffset: 0.5
+--- !u!114 &7603272007517093174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd58f1897a0e63846b0df06eefaeef86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.PlayerMovementCoordinator
+  rb: {fileID: 3440931124460914461}
+  inputReader: {fileID: 709910031395477912}
+  cameraTransform: {fileID: 0}
+  recordDodgeCommands: 1
+  ground: {fileID: 2422666012213759527}
+  wall: {fileID: 2463894991079215671}
+  ledge: {fileID: 8227494382685654552}
+  fallbackGravity: 30
+  fallbackMaxFallSpeed: 25
+  logTransitions: 1
+--- !u!114 &9223062402877740874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52ac7abb72b56e3408b6cda574fb047c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.LocomotionModule
+  priority: 10
+  walkSpeed: 3
+  runSpeed: 10
+  runInputThreshold: 0.75
+  timeToMaxSpeed: 0.2
+  timeToStop: 0.1
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  timeToChangeDirection: 0.1
+  airControl: 0.8
+  currentSpeed: 0
+  ramp: 0
+  headingDegrees: 0
+--- !u!114 &8104613663179640731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d609ef92886e81a4da401633d9e63db9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.JumpModule
+  priority: 60
+  jumpHeight: 5
+  timeToApex: 0.45
+  fallGravityMultiplier: 1.6
+  jumpCutGravityMultiplier: 2.5
+  apexThreshold: 1
+  apexGravityMultiplier: 0.75
+  maxFallSpeed: 25
+  coyoteTime: 0.35
+  jumpBufferTime: 0.15
+  ignoreGroundAfterJump: 0.1
+  startAirJumpsOnGround: 0
+  maxAirJumps: 1
+  airJumpHeight: 1.6
+  derivedGravity: 49.382717
+  derivedJumpVelocity: 22.222223
+  derivedAirTime: 0.8057562
+--- !u!114 &5466424873315817923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 375847e6bc894f24f861dd4d57e508f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.WallSlideModule
+  priority: 70
+  wall: {fileID: 2463894991079215671}
+  autoSlide: 1
+  requireInputTowardWall: 0
+  inputTowardWallThreshold: 0.3
+  grabBufferTime: 0.2
+  maxUpwardSpeedToStart: 2
+  minAirTime: 0.05
+  hangDuration: 0.4
+  minSlideSpeed: 1.5
+  maxSlideSpeed: 6
+  slideAcceleration: 4
+  maxDuration: 5
+  stickSpeed: 1
+  horizontalDamping: 20
+  wallLostGrace: 0.1
+  dropByPushingAway: 1
+  reattachCooldown: 1
+  grantsAirJump: 1
+  jumpBufferTime: 0.15
+  wallJump:
+    launchSpeed: 25
+    elevationAngle: 60
+    minAwaySpeed: 3
+    alongSpeed: 0
+    snapToPlayerAxes: 1
+    maxAngleLeft: 45
+    maxAngleRight: 45
+    controlLockTime: 0.3
+    lockUntilApex: 1
+--- !u!114 &532525779629202240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb9ebc81a0603844b93557d5785ed2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.WallRunModule
+  priority: 80
+  wall: {fileID: 2463894991079215671}
+  minAirTime: 0.05
+  minEntrySpeed: 4
+  maxEntryAngle: 60
+  wallRunSpeed: 15
+  wallRunAcceleration: 70
+  maxDuration: 1.5
+  maxUpwardSpeed: 0.5
+  wallGravity: 8
+  maxFallSpeed: 6
+  stickSpeed: 1.5
+  requireInput: 1
+  wallLostGrace: 0.12
+  reattachCooldown: 0.2
+  grantsAirJump: 1
+  jumpBufferTime: 0.15
+  wallJump:
+    launchSpeed: 30
+    elevationAngle: 60
+    minAwaySpeed: 3
+    alongSpeed: 3
+    snapToPlayerAxes: 1
+    maxAngleLeft: 45
+    maxAngleRight: 45
+    controlLockTime: 0.3
+    lockUntilApex: 1
+--- !u!114 &2799173161184684913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e84f404d36ca62489cc67b01626b683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.LedgeGrabModule
+  priority: 90
+  detector: {fileID: 8227494382685654552}
+  autoGrabWhenFalling: 1
+  grabBufferTime: 0.25
+  maxUpwardSpeedToGrab: 2
+  regrabCooldown: 0.5
+  hangDistanceFromWall: 0.35
+  hangPivotBelowLedge: 1.7
+  snapDuration: 0.08
+  maxHangTime: 0
+  climbDuration: 0.6
+  climbCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  verticalPortion: 0.65
+  climbForwardDistance: 0.5
+  climbExtraHeight: 0.05
+  climbWithJump: 1
+  climbByPushingTowardWall: 1
+  dropByPushingAway: 1
+  pushThreshold: 0.6
+--- !u!114 &5262650638740333029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47af5ee2237a77f469d1ade5cadae9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.DodgeModule
+  priority: 100
+  duration: 0.5
+  cooldown: 0.35
+  inputBufferTime: 0.15
+  iFrameStartDelay: 0.05
+  iFrameDuration: 0.3
+  distance: 8
+  positionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  backstepWhenNoInput: 1
+  cancelVerticalVelocity: 0
+  gravityWhileDodging: 25
+  canDodgeInAir: 1
+  maxAirDodges: 1
+--- !u!114 &7560356610944161224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b0d09f17b4f44c46a1e968ae7232789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.TestVisualFacing
+  body: {fileID: 3440931124460914461}
+  visual: {fileID: 0}
+  turnSpeed: 720
+  minSpeed: 0.5
+--- !u!114 &8545734276921433523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40671c8d2896c3a45827681d0dac27a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.MovementDebugHUD
+  coordinator: {fileID: 7603272007517093174}
+  show: 0
+  screenPosition: {x: 10, y: 10}
+  fontSize: 14
+  lockCursor: 1
+--- !u!114 &492935379474412314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085578250770896605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8918b427401a19d4a89a885b788045be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Movement.MovementRecorder
+  coordinator: {fileID: 7603272007517093174}
+  recording: 0
+  bufferSeconds: 8
+  secondsAfterTrigger: 1
+  autoDump: 1
+  kickUpThreshold: 1
+  extraRiseThreshold: 0.03
+  wallRunRiseThreshold: 0.5
+  autoDumpCooldown: 4
+  maxAutoDumps: 8
+  markBugAction: {fileID: -7908042664312566974, guid: 35845fe01580c41289b024647b1d1c53, type: 3}
+  dumpOnExit: 1
+  printToConsole: 1

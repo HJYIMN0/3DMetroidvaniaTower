@@ -56,6 +56,13 @@ namespace Game.Movement
             if (Time.fixedTime - _lastTickTime > dt * 1.5f) SyncFromRigidbody();
             _lastTickTime = Time.fixedTime;
 
+            // Standing on a surface steeper than the walkable limit: no horizontal control, physics slides the player down.
+            if (ctx.OnSteepSurface)
+            {
+                SyncFromRigidbody();
+                return;
+            }
+
             // After a wall jump the heading must stay inside the control zone: speed is kept, only steering is allowed.
             if (ctx.IsGrounded) ctx.ClearHeadingLock();
             if (ctx.IsHeadingLocked(rb.linearVelocity.y))

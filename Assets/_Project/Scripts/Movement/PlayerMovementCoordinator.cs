@@ -114,6 +114,9 @@ namespace Game.Movement
             _ctx.IsGrounded = ground != null && ground.IsGrounded;
             _ctx.AirTime = _ctx.IsGrounded ? 0f : _ctx.AirTime + dt;
             if (_ctx.IsGrounded) _ctx.LastWall = null;   // touching ground (GroundDetector mask) frees every wall again
+            _ctx.OnSteepSurface = ground != null && ground.IsOnSteepSurface && rb.linearVelocity.y <= 0.5f;
+            _ctx.SteepNormal = ground != null ? ground.SteepNormal : Vector3.up;
+            _ctx.SteepBlocked = false;
             if (wall != null) wall.Refresh();
             if (ledge != null) ledge.Refresh(_ctx.Facing);
 
@@ -125,6 +128,9 @@ namespace Game.Movement
 
             // 3) safety net: someone must own Y
             if (!_ctx.VerticalHandled) ApplyFallbackGravity(dt);
+
+            // 4) no climbing: remove horizontal velocity that pushes into surfaces steeper than the slope limit
+            ApplySteepSlopeBlock(dt);
 
             _publicMoveInput = _active != null ? Vector3.zero : _ctx.MoveInputWorld;
 
@@ -208,6 +214,40 @@ namespace Game.Movement
                 string from = prev != null ? prev.GetType().Name : "none";
                 string to = _active != null ? _active.GetType().Name : "none";
                 Debug.Log($"[PlayerMovementCoordinator] {from} -> {to}");
+            }
+        }
+
+        // Without this the PhysX solver deflects the horizontal velocity written by the modules ALONG a steep slope
+        // (zero friction) and the capsule climbs it. We remove only the horizontal component INTO the surface, so the player
+        // can still move along it or away from it; vertical velocity is untouched (gravity makes the player slide down).
+        private void ApplySteepSlopeBlock(float dt)
+        {
+            if (ground == null || !ground.BlocksSteepSurfaces || _active is LedgeGrabModule) return;
+
+            Vector3 v = rb.linearVelocity;
+            Vector3 h = new Vector3(v.x, 0f, v.z);
+            bool changed = false;
+
+            for (int i = 0; i < 2; i++)   // second pass handles corners (two steep surfaces)
+            {
+                float speed = h.magnitude;
+                if (speed < 0.01f) break;
+                if (!ground.TryGetSteepSurface(h / speed, speed * dt, out Vector3 normal)) break;
+
+                Vector3 nh = new Vector3(normal.x, 0f, normal.z);
+                if (nh.sqrMagnitude < 0.0001f) break;   // normal is vertical: nothing to slide along
+                nh.Normalize();
+
+                float into = Vector3.Dot(h, nh);
+                if (into >= 0f) break;                  // already moving away
+                h -= nh * into;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                rb.linearVelocity = new Vector3(h.x, v.y, h.z);
+                _ctx.SteepBlocked = true;
             }
         }
 

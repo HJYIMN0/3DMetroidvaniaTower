@@ -110,7 +110,7 @@ namespace Game.Movement
             }
 
             _sb.Append("Grounded: ").Append(coordinator.IsGrounded)
-               .Append("   AirTime: ").Append(coordinator.Context.AirTime.ToString("F2")).Append(" s\n");
+               .Append("   AirTime: ").Append(coordinator.Context.AirTime.ToString("F2")).Append(" s   Steep: ").Append(coordinator.Context.OnSteepSurface).Append('\n');
             _sb.Append("Speed XZ: ").Append(speedXZ.ToString("F2")).Append(" m/s   Vy: ").Append(v.y.ToString("F2")).Append(" m/s\n");
             _sb.Append("Input: ").Append(coordinator.Context.MoveInputRaw.ToString("F2"))
                .Append("   JumpHeld: ").Append(coordinator.Context.JumpHeld).Append('\n');
